@@ -1,0 +1,82 @@
+# 系统配置
+system:
+  name: "crypto-quant-mvp"
+  mode: "backtest"  # backtest | dry-run | live
+  log_level: "INFO"
+  log_format: "json"  # json | console
+
+# 交易所配置
+exchanges:
+  binance:
+    enabled: true
+    type: "futures"  # futures | spot
+    testnet: true
+    # API Key 通过 vault 加密存储，不在此处配置
+    options:
+      defaultType: "future"
+
+  hyperliquid:
+    enabled: true
+    # 签名密钥通过 vault 加密存储
+    mainnet: false  # MVP 先用 testnet
+
+# 数据采集配置
+data:
+  cache_dir: "./data_cache"
+  default_timeframes:
+    - "1m"
+    - "5m"
+    - "15m"
+    - "1h"
+    - "4h"
+    - "1d"
+  default_symbols:
+    - "BTC/USDT"
+    - "ETH/USDT"
+
+# 回测配置
+backtest:
+  initial_capital: 10000.0  # USDT
+  commission:
+    maker: 0.0002  # 0.02%
+    taker: 0.0005  # 0.05%
+  slippage:
+    model: "fixed"  # fixed | percentile
+    value: 0.0001   # 0.01%
+  start_date: "2025-01-01"
+  end_date: "2026-07-01"
+
+# 风控配置
+risk:
+  max_position_pct: 0.1      # 单笔最大仓位占总资金 10%
+  max_daily_loss_pct: 0.05   # 日最大亏损 5%
+  max_total_exposure_pct: 0.5  # 总资金利用率上限 50%
+  max_slippage_pct: 0.005    # 滑点保护 0.5%
+  circuit_breaker:
+    enabled: true
+    consecutive_losses: 5     # 连续亏损 5 次触发
+
+# 监控配置
+monitoring:
+  telegram:
+    enabled: false
+    # bot_token 和 chat_id 通过 vault 存储
+  alert_events:
+    - "circuit_breaker"
+    - "large_loss"
+    - "connection_lost"
+    - "order_filled"
+
+# 策略配置
+strategies:
+  dual_ma:
+    fast_period: 10
+    slow_period: 30
+    symbol: "BTC/USDT"
+    timeframe: "4h"
+
+  bollinger_breakout:
+    period: 20
+    std_dev: 2.0
+    symbol: "BTC/USDT"
+    timeframe: "1h"

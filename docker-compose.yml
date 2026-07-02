@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  cquant:
+    build: .
+    volumes:
+      - ./vault:/app/vault
+      - ./logs:/app/logs
+      - ./data_cache:/app/data_cache
+      - ./config/settings.yaml:/app/config/settings.yaml:ro
+    environment:
+      - CQUANT_LOG_FORMAT=console
+    restart: "no"
